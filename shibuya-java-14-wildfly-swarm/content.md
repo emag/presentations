@@ -189,6 +189,15 @@ https://wildfly-swarm.gitbooks.io/wildfly-swarm-users-guide/content/netflixoss.h
 
 ### Netflix OSS
 
+Ribbon と Hystrix の主な機能
+
+* Ribbon: クライアントサイド ロードバランシング
+* Hystrix: サーキットブレーカ
+
+
+
+### Netflix OSS
+
 * Time Service と Event Service の 2 サービスがある例
  * https://github.com/wildfly-swarm/wildfly-swarm-examples/tree/1.0.0.Alpha8/ribbon
 
@@ -421,6 +430,7 @@ CDI を利用すると実行時エラーになる
 
 * AmbiguousResolutionException thrown with swagger fraction
  * https://issues.jboss.org/browse/SWARM-271
+
 
 
 ## おまけ
