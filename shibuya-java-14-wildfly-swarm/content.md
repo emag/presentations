@@ -437,7 +437,9 @@ CDI を利用すると実行時エラーになる
 
 WildFly Swarm を一通り触ってみるブログエントリ
 
-[WildFly Swarm 周遊](http://morec.at/blog/2015/12/21/wildfly-swarm-tour)
+__WildFly Swarm 周遊__
+
+http://morec.at/blog/2015/12/21/wildfly-swarm-tour
 
 * Hello WildFly Swarm
 * 簡単な CRUD アプリ
