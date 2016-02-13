@@ -227,7 +227,7 @@ Time Service は 8081 がダウンしても実行可能
 
 Time Service 両系ダウンすると Event Service は時刻表示にフォールバック用のレスポンス(次ページ)を利用
 
-<img src="images/ribbon_example_04.png" width="40%"/>
+<img src="images/ribbon_example_04.png" width="60%"/>
 
 
 
