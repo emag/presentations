@@ -1,0 +1,109 @@
+= artemis-demo
+
+== Install ActiveMQ Artemis
+
+https://activemq.apache.org/artemis/download.html
+
+== Create a Broker
+
+[source, sh]
+----
+$ ${ARTEMIS_HOME}/bin/artemis create mybroker
+
+[... some interactions e.g. username, password]
+----
+
+== Run the Broker
+
+[source, sh]
+----
+$ cd mybroker
+$ bin/artemis run
+----
+
+== Run Publisher
+
+[source, sh]
+----
+$ ./mvnw clean compile exec:java -pl producer
+----
+
+== Run Consumer
+
+[source, sh]
+----
+$ ./mvnw clean compile exec:java -pl consumer
+----
+
+[source, sh]
+----
+Received: Hello, Artemis!
+----
+
+== Run REST Server
+
+[source, sh]
+----
+$ ./mvnw clean package -pl rest-server
+$ java -jar rest-server/target/rest-server.jar
+----
+
+== Obtain `msg-*` Header
+
+[source, sh]
+----
+$ curl -I localhost:8080/queues/orders
+----
+
+The response is:
+----
+HTTP/1.1 200 OK
+msg-push-consumers: http://localhost:8080/queues/orders/push-consumers
+Connection: keep-alive
+msg-create: http://localhost:8080/queues/orders/create
+Content-Length: 0
+msg-create-with-id: http://localhost:8080/queues/orders/create/{id}
+msg-pull-consumers: http://localhost:8080/queues/orders/pull-consumers
+Date: Fri, 29 Sep 2017 13:29:58 GMT
+----
+
+== Do a POST message
+
+[source, sh]
+----
+$ curl -XPOST -H 'Content-Type: application/json' http://localhost:8080/queues/orders/create -v -d '
+{
+  "order" : "Test Order"
+}'
+----
+
+The response is:
+----
+< HTTP/1.1 201 Created
+< Connection: keep-alive
+< msg-create-next-type: */*
+< msg-create-next: http://localhost:8080/queues/orders/create
+< Content-Length: 0
+< Date: Fri, 29 Sep 2017 13:38:38 GMT
+----
+
+== Consume a message
+
+[source, sh]
+----
+$ curl -XPOST http://localhost:8080/queues/orders/pull-consumers -d 'autoAck=false' -v
+----
+
+Check the `msg-acknowledge-next` link.
+----
+< msg-acknowledge-next: http://localhost:8080/queues/orders/pull-consumers/attributes-1/1-queue-orders-1506699847052/acknowledge-next-1
+----
+
+[source, sh]
+----
+$ curl -XPOST http://localhost:8080/queues/orders/pull-consumers/attributes-1/1-queue-orders-1506699847052/acknowledge-next-1
+
+{
+  "order" : "Test Order"
+}
+----

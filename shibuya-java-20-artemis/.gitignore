@@ -1,0 +1,6 @@
+# ignore Bundler / JRuby files
+.bundle
+Gemfile.lock
+
+index.html
+shibuya-java-20-artemis.html
