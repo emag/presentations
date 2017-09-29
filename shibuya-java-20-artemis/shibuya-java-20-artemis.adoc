@@ -13,7 +13,13 @@ image::activemq-logo.png[]
 
 https://shibuya-java.connpass.com/event/65433[第二十回 #渋谷java]
 
-田邊 義真(icon:twitter[] https://twitter.com/emaggame[@emaggame] / icon:link[] http://morec.at[morec.at])
+++++
+<hr/>
+++++
+
+* 田邊 義真(たなべ よしまさ)
+** icon:twitter[] https://twitter.com/emaggame[@emaggame] icon:link[] http://morec.at[morec.at]
+* icon:database[] https://github.com/emag/presentations/tree/master/shibuya-java-20-artemis[このドキュメントのリポジトリ]
 
 == Agenda
 
