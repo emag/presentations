@@ -1,0 +1,3 @@
+[submodule "shibuya-java-20-artemis/reveal.js"]
+	path = shibuya-java-20-artemis/reveal.js
+	url = https://github.com/hakimel/reveal.js.git

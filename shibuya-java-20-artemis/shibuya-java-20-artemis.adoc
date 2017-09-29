@@ -1,0 +1,289 @@
+= Introduction to Apache ActiveMQ Artemis
+:icons: font
+:imagesdir: images
+:customcss: styles/custom.css
+:source-highlighter: highlightjs
+:revealjs_theme: simple
+:revealjs_slideNumber: true
+:revealjs_center: false
+:revealjs_history: true
+:revealjs_transition: none
+
+image::activemq-logo.png[]
+
+https://shibuya-java.connpass.com/event/65433[第二十回 #渋谷java]
+
+田邊 義真(icon:twitter[] https://twitter.com/emaggame[@emaggame] / icon:link[] http://morec.at[morec.at])
+
+== Agenda
+
+* Why Messaging
+* Apache ActiveMQ Artemis
+* Getting Started
+
+== Why Messaging
+
+* Asynchronous Messaging Passing
+* Decoupling between Producers and Consumers
+* Routing by Broker
+** e.g. Selector, Security and Flow Control
+
+== Messaging Components
+
+image::messaging-concepts.png[]
+
+== Orchestration vs Choreography
+
+image::orchestration.png[height=250px]
+image::choreography.png[height=250px]
+
+== Broker Implementations
+
+* https://activemq.apache.org/artemis/[Apache ActiveMQ Artemis]: Java icon:thumbs-o-up[]
+* https://kafka.apache.org/[Apache Kafka]: Scala, Java
+* https://www.rabbitmq.com/[RabbitMQ]: Erlang
+* ...
+
+image::broker-implementations.png[]
+
+== Apache ActiveMQ Artemis
+
+image::activemq-logo.png[]
+
+* High Performance
+* Flexible Clustering & HA
+* Multi Protocols Support
+
+== High Performance
+
+image::summary-throughput.png[]
+
+++++
+<a href="https://softwaremill.com/mqperf/" style="font-size: 0.5em;">Evaluating persistent, replicated message queues - SoftwareMill</a>
+++++
+
+== High Performance
+
+* Journal Implementations: Message Persistence
+** Java NIO
+** Linux Asynchronous IO
+** Memory mapped
+
+++++
+<a href="https://activemq.apache.org/artemis/docs/latest/persistence.html#apache-activemq-artemis-file-journal-default" style="font-size: 0.5em;">Apache ActiveMQ Artemis File Journal (Default) - Apache ActiveMQ Artemis User Manual</a>
+++++
+
+== Flexible Clustering & HA
+
+* Clustering
+** TCP / UDP / http://www.jgroups.org/[JGroups]
+** Server-Side Message Load Balancing
+** Client-Side Load balancing
+** Message Redistribution
+* High Availability
+** Replication
+** Shared Store
+
+== Clustering
+
+image::clustering.png[]
+
+++++
+<a href="https://activemq.apache.org/artemis/docs/latest/clusters.html" style="font-size: 0.5em;">Clusters - Apache ActiveMQ Artemis User Manual</a>
+++++
+
+== High Availability
+
+Replication
+
+image::ha-replication.png[]
+
+++++
+<a href="https://activemq.apache.org/artemis/docs/latest/ha.html" style="font-size: 0.5em;">High Availability and Failover - Apache ActiveMQ Artemis User Manual</a>
+++++
+
+== High Availability
+
+Shared Store
+
+image::ha-shared-store.png[]
+
+++++
+<a href="https://activemq.apache.org/artemis/docs/latest/ha.html" style="font-size: 0.5em;">High Availability and Failover - Apache ActiveMQ Artemis User Manual</a>
+++++
+
+== Multi Protocols Support
+
+* AMQP
+* OpenWire
+* MQTT
+* STOMP
+* HornetQ
+* HTTP(Tunnel / REST Interface)
+
+== Getting Started
+
+1. Create a Broker
+2. Run the Broker
+3. Run Clients(Publisher / Consumer)
+
+== Create a Broker
+
+[source, sh]
+----
+$ ${ARTEMIS_HOME}/bin/artemis create mybroker
+
+[... some interactions e.g. username, password ...]
+
+done! Your system can make 0.5 writes per millisecond, your journal-buffer-timeout will be 2008000
+
+You can now start the broker by executing:
+
+   "/path/to/artemis/mybroker/bin/artemis" run
+
+Or you can run the broker in the background using:
+
+   "/path/to/artemis/mybroker/bin/artemis-service" start
+----
+
+== Setup the Broker
+
+Edit **mybroker/etc/broker.xml**.
+
+[source, xml]
+----
+<acceptors>
+  <acceptor name="artemis">
+    tcp://0.0.0.0:61616?protocols=CORE,AMQP,STOMP,...
+  </acceptor>
+</acceptors>
+
+<addresses>
+  <address name="exampleQueue">
+    <anycast>
+       <queue name="exampleQueue"/>
+    </anycast>
+  </address>
+</addresses>
+----
+
+++++
+<div style="font-size: 0.5em;">
+  <p> Apache ActiveMQ Artemis User Manual</p>
+  <ul>
+    <li><a href="https://activemq.apache.org/artemis/docs/latest/configuring-transports.html">Configuring the Transport</a></li>
+    <li><a href="https://activemq.apache.org/artemis/docs/latest/address-model.html">Apache ActiveMQ Artemis Addressing and Queues</a></li>
+  </ul>
+<div>
+++++
+
+== Run the Broker
+
+[source, sh]
+----
+$ cd mybroker
+$ bin/artemis run
+     _        _               _
+    / \  ____| |_  ___ __  __(_) _____
+   / _ \|  _ \ __|/ _ \  \/  | |/  __/
+  / ___ \ | \/ |_/  __/ |\/| | |\___ \
+ /_/   \_\|   \__\____|_|  |_|_|/___ /
+ Apache ActiveMQ Artemis 2.3.0
+
+[...]
+----
+
+== Run Publisher
+
+[source, java]
+----
+import org.apache.activemq.artemis.api.jms.ActiveMQJMSClient;
+import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
+
+import javax.jms.JMSContext;
+import javax.jms.Queue;
+
+Queue queue = ActiveMQJMSClient.createQueue("exampleQueue");
+
+try (ActiveMQConnectionFactory cf = new ActiveMQConnectionFactory();
+     JMSContext context = cf.createContext()) {
+
+  context
+    .createProducer()
+    .send(queue, "Hello, Artemis!");
+}
+----
+
+== Run Consumer
+
+[source, java]
+----
+Queue queue = ActiveMQJMSClient.createQueue("exampleQueue");
+
+try (ActiveMQConnectionFactory cf = new ActiveMQConnectionFactory();
+     JMSContext context = cf.createContext()) {
+
+  String message = context
+    .createConsumer(queue)
+    .receiveBody(String.class);
+
+  System.out.println("Received: " + message);
+}
+----
+
+[source, sh]
+----
+Received: Hello, Artemis!
+----
+
+== REST Interface
+
+Producer
+
+[source, sh]
+----
+$ curl -XPOST -H 'Content-Type: application/json' \
+       http://localhost:8080/queues/orders/create -d '
+{
+  "order" : "Test Order"
+}'
+----
+
+Consumer
+
+[source, sh]
+----
+$ curl -XPOST  http://localhost:8080/queues/orders/pull-consumers/...
+
+{
+  "order" : "Test Order"
+}
+----
+
+++++
+<a href="https://activemq.apache.org/artemis/docs/latest/rest.html" style="font-size: 0.5em;">REST Interface - Apache ActiveMQ Artemis User Manual</a></a>
+++++
+
+== Management Console
+
+image::console-attribute.png[console-attribute,475,float="left"]
+image::console-diagram.png[console-diagram,475,float="left"]
+
+++++
+<a href="https://activemq.apache.org/artemis/docs/latest/management-console.html" style="font-size: 0.5em;">Management Console - Apache ActiveMQ Artemis User Manual</a></a>
+++++
+
+== Summary
+
+* High Performance
+* Flexible Clustering & HA
+* Multi Protocols Support
+
+== Resources
+
+* Official
+** https://activemq.apache.org/artemis
+* Documents
+** https://activemq.apache.org/artemis/docs.html
+* Examples
+** https://github.com/apache/activemq-artemis/tree/2.3.0/examples

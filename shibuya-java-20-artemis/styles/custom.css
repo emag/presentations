@@ -1,0 +1,41 @@
+/* override-revealjs */
+.reveal {
+  font-family: "Gen Jyuu Gothic Normal", sans-serif;
+}
+
+.reveal h1,
+.reveal h2,
+.reveal h3,
+.reveal h4,
+.reveal h5,
+.reveal h6 {
+  text-transform: none;
+}
+
+.reveal h1,
+.reveal h2 {
+  font-size: 1.3em;
+  font-weight: bolder;
+}
+
+.reveal h3,
+.reveal h4,
+.reveal h5,
+.reveal h6 {
+  font-size: 1.2em;
+}
+
+.reveal .slides {
+  text-align: left;
+}
+
+.reveal section img {
+  background:none;
+  border: none;
+  box-shadow:none;
+}
+
+/* constom selector */
+.resources {
+  font-size: 0.5em;
+}
