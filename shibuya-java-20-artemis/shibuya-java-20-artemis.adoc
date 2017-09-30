@@ -131,7 +131,7 @@ image::ha-shared-store.png[]
 
 1. Create a Broker
 2. Run the Broker
-3. Run Clients(Publisher / Consumer)
+3. Run Clients(Producer / Consumer)
 
 == Create a Broker
 
@@ -199,7 +199,7 @@ $ bin/artemis run
 [...]
 ----
 
-== Run Publisher
+== Run Producer
 
 [source, java]
 ----
